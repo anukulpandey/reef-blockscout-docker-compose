@@ -1,93 +1,51 @@
-# Docker-compose configuration
+<h1 align="center">Blockscout</h1>
+<p align="center">Blockchain Explorer for inspecting and analyzing EVM Chains.</p>
+<div align="center">
 
-Runs Blockscout locally in Docker containers with [docker-compose](https://github.com/docker/compose).
+[![Blockscout](https://github.com/blockscout/blockscout/actions/workflows/config.yml/badge.svg)](https://github.com/blockscout/blockscout/actions)
+[![Discord](https://dcbadge.vercel.app/api/server/blockscout?style=flat)](https://discord.gg/blockscout)
 
-## Prerequisites
+</div>
 
-- Docker v20.10+
-- Docker-compose 2.x.x+
-- Running Ethereum JSON RPC client
 
-## Building Docker containers from source
+Blockscout provides a comprehensive, easy-to-use interface for users to view, confirm, and inspect transactions on EVM (Ethereum Virtual Machine) blockchains. This includes Ethereum Mainnet, Ethereum Classic, Optimism, Gnosis Chain and many other **Ethereum testnets, private networks, L2s and sidechains**.
 
-**Note**: in all below examples, you can use `docker compose` instead of `docker-compose`, if compose v2 plugin is installed in Docker.
+See our [project documentation](https://docs.blockscout.com/) for detailed information and setup instructions.
 
-```bash
-cd ./docker-compose
-docker-compose up --build
-```
+For questions, comments and feature requests see the [discussions section](https://github.com/blockscout/blockscout/discussions) or via [Discord](https://discord.com/invite/blockscout).
 
-**Note**: if you don't need to make backend customizations, you can run `docker-compose up` in order to launch from pre-build backend Docker image. This will be much faster.
+## About Blockscout
 
-This command uses `docker-compose.yml` by-default, which builds the backend of the explorer into the Docker image and runs 9 Docker containers:
+Blockscout allows users to search transactions, view accounts and balances, verify and interact with smart contracts and view and interact with applications on the Ethereum network including many forks, sidechains, L2s and testnets.
 
-- Postgres 14.x database, which will be available at port 7432 on the host machine.
-- Redis database of the latest version.
-- Blockscout backend with api at /api path.
-- Nginx proxy to bind backend, frontend and microservices.
-- Blockscout explorer at http://localhost.
+Blockscout is an open-source alternative to centralized, closed source block explorers such as Etherscan, Etherchain and others.  As Ethereum sidechains and L2s continue to proliferate in both private and public settings, transparent, open-source tools are needed to analyze and validate all transactions.
 
-and 5 containers for microservices (written in Rust):
+## Supported Projects
 
-- [Stats](https://github.com/blockscout/blockscout-rs/tree/main/stats) service with a separate Postgres 14 DB.
-- [Sol2UML visualizer](https://github.com/blockscout/blockscout-rs/tree/main/visualizer) service.
-- [Sig-provider](https://github.com/blockscout/blockscout-rs/tree/main/sig-provider) service.
-- [User-ops-indexer](https://github.com/blockscout/blockscout-rs/tree/main/user-ops-indexer) service.
+Blockscout currently supports several hundred chains and rollups throughout the greater blockchain ecosystem. Ethereum, Cosmos, Polkadot, Avalanche, Near and many others include Blockscout integrations. A comprehensive list is available at [chains.blockscout.com](https://chains.blockscout.com). If your project is not listed, contact the team in [Discord](https://discord.com/invite/blockscout).
 
-**Note for Linux users**: Linux users need to run the local node on http://0.0.0.0/ rather than http://127.0.0.1/
+## Getting Started
 
-## Configs for different Ethereum clients
+See the [project documentation](https://docs.blockscout.com/) for instructions:
 
-The repo contains built-in configs for different JSON RPC clients without need to build the image.
+- [Manual deployment](https://docs.blockscout.com/for-developers/deployment/manual-deployment-guide)
+- [Docker-compose deployment](https://docs.blockscout.com/for-developers/deployment/docker-compose-deployment)
+- [Kubernetes deployment](https://docs.blockscout.com/for-developers/deployment/kubernetes-deployment)
+- [Manual deployment (backend + old UI)](https://docs.blockscout.com/for-developers/deployment/manual-old-ui)
+- [Ansible deployment](https://docs.blockscout.com/for-developers/ansible-deployment)
+- [ENV variables](https://docs.blockscout.com/setup/env-variables)
+- [Configuration options](https://docs.blockscout.com/for-developers/configuration-options)
 
-| __JSON RPC Client__    | __Docker compose launch command__ |
-| -------- | ------- |
-| Erigon  | `docker-compose -f erigon.yml up -d`    |
-| Geth (suitable for Reth as well) | `docker-compose -f geth.yml up -d`     |
-| Geth Clique    | `docker-compose -f geth-clique-consensus.yml up -d`    |
-| Nethermind, OpenEthereum    | `docker-compose -f nethermind.yml up -d`    |
-| Anvil    | `docker-compose -f anvil.yml up -d`    |
-| HardHat network    | `docker-compose -f hardhat-network.yml up -d`    |
+## Acknowledgements
 
-- Running only explorer without DB: `docker-compose -f external-db.yml up -d`. In this case, no db container is created. And it assumes that the DB credentials are provided through `DATABASE_URL` environment variable on the backend container.
-- Running explorer with external backend: `docker-compose -f external-backend.yml up -d`
-- Running explorer with external frontend: `FRONT_PROXY_PASS=http://host.docker.internal:3000/ docker-compose -f external-frontend.yml up -d`
-- Running all microservices: `docker-compose -f microservices.yml up -d`
-- Running only explorer without microservices: `docker-compose -f no-services.yml up -d`
+We would like to thank the EthPrize foundation for their funding support.
 
-All of the configs assume the Ethereum JSON RPC is running at http://localhost:8545.
+## Contributing
 
-In order to stop launched containers, run `docker-compose -f config_file.yml down`, replacing `config_file.yml` with the file name of the config which was previously launched.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution and pull request protocol. We expect contributors to follow our [code of conduct](CODE_OF_CONDUCT.md) when submitting code or comments.
 
-You can adjust BlockScout environment variables:
+## License
 
-- for backend in `./envs/common-blockscout.env`
-- for frontend in `./envs/common-frontend.env`
-- for stats service in `./envs/common-stats.env`
-- for visualizer in `./envs/common-visualizer.env`
-- for user-ops-indexer in `./envs/common-user-ops-indexer.env`
+[![License: GPL v3.0](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Descriptions of the ENVs are available
-
-- for [backend](https://docs.blockscout.com/setup/env-variables)
-- for [frontend](https://github.com/blockscout/frontend/blob/main/docs/ENVS.md).
-
-## Running Docker containers via Makefile
-
-Prerequisites are the same, as for docker-compose setup.
-
-Start all containers:
-
-```bash
-cd ./docker
-make start
-```
-
-Stop all containers:
-
-```bash
-cd ./docker
-make stop
-```
-
-***Note***: Makefile uses the same .env files since it is running docker-compose services inside.
+This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
