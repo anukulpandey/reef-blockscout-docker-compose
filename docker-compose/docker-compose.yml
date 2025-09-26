@@ -33,10 +33,12 @@ services:
         RELEASE_VERSION: 9.1.0
     links:
       - db:database
+    ports:
+      - "4000:4000"
     environment:
         ETHEREUM_JSONRPC_HTTP_URL: http://34.56.133.26:8545/
         ETHEREUM_JSONRPC_TRACE_URL: http://34.56.133.26:8545/
-        ETHEREUM_JSONRPC_WS_URL: ws://host.docker.internal:8545/
+        ETHEREUM_JSONRPC_WS_URL: ws://34.56.133.26:9944/
         CHAIN_ID: '13939'
 
   nft_media_handler:
@@ -64,6 +66,8 @@ services:
   frontend:
     depends_on:
       - backend
+    ports:
+      - "3000:3000"
     extends:
       file: ./services/frontend.yml
       service: frontend
@@ -96,12 +100,3 @@ services:
     extends:
       file: ./services/user-ops-indexer.yml
       service: user-ops-indexer
-
-  proxy:
-    depends_on:
-      - backend
-      - frontend
-      - stats
-    extends:
-      file: ./services/nginx.yml
-      service: proxy
