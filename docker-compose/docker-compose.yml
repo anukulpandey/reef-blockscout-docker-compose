@@ -67,7 +67,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "3000:3000"
+      - "3000:3001"
     extends:
       file: ./services/frontend.yml
       service: frontend
